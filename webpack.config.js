@@ -1,31 +1,41 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const isEnvProduction = process.env.NODE_ENV === 'production';
+module.exports = function (webpackEnv) {
+    const isEnvProduction = webpackEnv === 'production';
 
-module.exports = {
-    mode: isEnvProduction ? 'production' : 'development',
-    entry: './src/index.tsx',
-    devtool: 'inline-source-map',
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/,
-            },
+    return {
+        mode: isEnvProduction ? 'production' : 'development',
+        entry: './src/index.tsx',
+        devtool: isEnvProduction ? 'source-map' : 'inline-source-map',
+        devServer: {
+            open: true,
+            port: 3000,
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    use: 'ts-loader',
+                    exclude: /node_modules/,
+                },
+                {
+                    test: /\.css$/i,
+                    use: ['style-loader', 'css-loader'],
+                },
+            ],
+        },
+        resolve: {
+            extensions: ['.tsx', '.ts', '.js'],
+        },
+        output: {
+            filename: 'main.js',
+            path: path.resolve(__dirname, 'build'),
+        },
+        plugins: [
+            new HtmlWebpackPlugin({
+                template: './public/index.html',
+            }),
         ],
-    },
-    resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
-    },
-    output: {
-        filename: 'index.js',
-        path: path.resolve(__dirname, 'build'),
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './public/index.html',
-        }),
-    ],
+    };
 };
