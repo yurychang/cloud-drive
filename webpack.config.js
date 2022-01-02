@@ -15,13 +15,47 @@ module.exports = function (env, args) {
         module: {
             rules: [
                 {
-                    test: /\.tsx?$/,
-                    use: 'ts-loader',
-                    exclude: /node_modules/,
-                },
-                {
-                    test: /\.css$/i,
-                    use: ['style-loader', 'css-loader', 'postcss-loader'],
+                    oneOf: [
+                        {
+                            test: /\.tsx?$/,
+                            use: 'ts-loader',
+                            exclude: /node_modules/,
+                        },
+                        {
+                            test: /\.css$/i,
+                            use: [
+                                'style-loader',
+                                'css-loader',
+                                'postcss-loader',
+                            ],
+                        },
+                        {
+                            type: 'asset',
+                            resourceQuery: /url/, // *.svg?url
+                        },
+                        {
+                            test: /\.svg$/i,
+                            issuer: /\.[jt]sx?$/,
+                            use: [
+                                {
+                                    loader: '@svgr/webpack',
+                                    options: {
+                                        prettier: false,
+                                        svgo: false,
+                                        svgoConfig: {
+                                            plugins: [{ removeViewBox: false }],
+                                        },
+                                        titleProp: true,
+                                        ref: true,
+                                    },
+                                },
+                            ],
+                        },
+                        {
+                            test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                            type: 'asset/resource',
+                        },
+                    ],
                 },
             ],
         },
@@ -34,7 +68,7 @@ module.exports = function (env, args) {
         },
         plugins: [
             new HtmlWebpackPlugin({
-                template: './public/index.html',
+                template: './src/index.html',
             }),
         ],
     };
