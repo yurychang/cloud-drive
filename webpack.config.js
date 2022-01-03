@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = function (env, args) {
     const isEnvProduction = process.env.NODE_ENV === 'production';
@@ -18,7 +19,7 @@ module.exports = function (env, args) {
                 {
                     oneOf: [
                         {
-                            test: /\.(m?js|tsx?)$/,
+                            test: /\.([jt]sx?)$/,
                             exclude: /node_modules/,
                             use: {
                                 loader: 'babel-loader',
@@ -73,6 +74,7 @@ module.exports = function (env, args) {
             new HtmlWebpackPlugin({
                 template: './src/index.html',
             }),
-        ],
+            !isEnvProduction && new ReactRefreshWebpackPlugin(),
+        ].filter(Boolean),
     };
 };

@@ -9,5 +9,6 @@
                 "allExtensions": true
             }
         ]
-    ]
+    ],
+    "plugins": ["react-refresh/babel"]
 }
