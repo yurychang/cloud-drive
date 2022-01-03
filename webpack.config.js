@@ -13,6 +13,7 @@ module.exports = function (env, args) {
             open: true,
             port: 3000,
             hot: true,
+            historyApiFallback: true,
         },
         module: {
             rules: [
@@ -69,6 +70,7 @@ module.exports = function (env, args) {
         output: {
             filename: 'main.js',
             path: path.resolve(__dirname, 'build'),
+            publicPath: '/',
         },
         plugins: [
             new HtmlWebpackPlugin({
