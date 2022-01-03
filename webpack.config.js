@@ -28,11 +28,12 @@ module.exports = function (env, args) {
                             },
                         },
                         {
-                            test: /\.css$/i,
+                            test: /\.(s[ac]ss|css)$/i,
                             use: [
                                 'style-loader',
                                 'css-loader',
                                 'postcss-loader',
+                                'sass-loader',
                             ],
                         },
                         {
