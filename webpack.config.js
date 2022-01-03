@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = function (env, args) {
     const isEnvProduction = process.env.NODE_ENV === 'production';
@@ -66,6 +67,7 @@ module.exports = function (env, args) {
         },
         resolve: {
             extensions: ['.tsx', '.ts', '.js', 'jsx', '.json'],
+            plugins: [new TsconfigPathsPlugin()],
         },
         output: {
             filename: 'main.js',
