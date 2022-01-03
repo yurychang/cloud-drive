@@ -11,15 +11,18 @@ module.exports = function (env, args) {
         devServer: {
             open: true,
             port: 3000,
+            hot: true,
         },
         module: {
             rules: [
                 {
                     oneOf: [
                         {
-                            test: /\.tsx?$/,
-                            use: 'ts-loader',
+                            test: /\.(m?js|tsx?)$/,
                             exclude: /node_modules/,
+                            use: {
+                                loader: 'babel-loader',
+                            },
                         },
                         {
                             test: /\.css$/i,
@@ -60,7 +63,7 @@ module.exports = function (env, args) {
             ],
         },
         resolve: {
-            extensions: ['.tsx', '.ts', '.js'],
+            extensions: ['.tsx', '.ts', '.js', 'jsx', '.json'],
         },
         output: {
             filename: 'main.js',
