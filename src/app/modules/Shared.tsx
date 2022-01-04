@@ -1,25 +1,15 @@
-import {
-    MdArrowDownward,
-    MdFolder,
-    MdInfo,
-    MdOutlineStarOutline,
-    MdPeopleAlt,
-} from 'react-icons/md';
+import { MdFolder, MdInfo, MdPeopleAlt } from 'react-icons/md';
 import AreaHeader from '@components/AreaHeader';
-import FileCard from '@components/FileCard';
-import FolderCard from '@components/FolderCard';
 import ViewModeBtn, { changeViewMode } from '@components/ViewModeBtn';
 import { useState } from 'react';
 import { ViewMode } from '@custom-types/view-mode';
-import { Container } from 'react-bootstrap';
-import IconBtn from '@components/IconBtn';
 import SortBtn from '@components/SortBtn';
 
 export default function Shared() {
     const [viewMode, setViewMode] = useState<ViewMode>('list');
 
     return (
-        <Container className="px-8 pb-8 overflow-hidden">
+        <div className="px-8 pb-8 overflow-hidden">
             <section>
                 <div className="flex my-5">
                     <AreaHeader
@@ -103,6 +93,6 @@ export default function Shared() {
                     </div>
                 </div>
             </div>
-        </Container>
+        </div>
     );
 }
