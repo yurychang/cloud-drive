@@ -9,7 +9,7 @@ export default function AreaHeader({
 }: {
     Icon: React.ComponentType<any>;
     tools?: React.ReactNode;
-    title: string;
+    title: React.ReactNode;
     className?: string;
     [key: string]: any;
 }) {

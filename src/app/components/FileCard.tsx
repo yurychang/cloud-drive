@@ -31,24 +31,8 @@ export default function FileCard({
         'rounded',
     ]);
 
-    const starClass = classNames([
-        {
-            'text-yellow-400': starred,
-            'opacity-30': !starred,
-        },
-        'absolute',
-        'top-3',
-        'right-3',
-    ]);
-
     return (
         <div className={cardClass}>
-            <button
-                className={starClass}
-                onClick={() => onStarChange?.(!starred)}
-            >
-                <StarIcon className="text-2xl"></StarIcon>
-            </button>
             <div className="h-[120px] bg-neutral-100"></div>
             <p className="px-4 py-3 truncate bg-white">{name}</p>
         </div>

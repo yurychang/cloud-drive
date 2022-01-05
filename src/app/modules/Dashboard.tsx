@@ -15,6 +15,7 @@ import { CloudObject } from '@custom-types/object';
 import List from '@components/List';
 import { getMyObjectApi } from '../api';
 import { useMyObject } from '../features/object';
+import Breadcrumb from '@components/Breadcrumb';
 
 const myDriveApi: CloudObject[] = Array.from({ length: 12 }, (v, k) => ({
     id: k,
@@ -58,7 +59,12 @@ export default function Dashboard() {
             <section className="mt-5">
                 <AreaHeader
                     Icon={MdCloudUpload}
-                    title="My Drive"
+                    title={
+                        <Breadcrumb>
+                            <Breadcrumb.Item>My Drive</Breadcrumb.Item>
+                            <Breadcrumb.Item>My Drive</Breadcrumb.Item>
+                        </Breadcrumb>
+                    }
                     tools={
                         <ViewModeBtn
                             mode={viewMode}
