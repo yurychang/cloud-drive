@@ -74,7 +74,10 @@ List.Col = function ListCol({
     [key: string]: any;
 }) {
     return (
-        <div className={classNames('py-3 px-2', className)} {...props}>
+        <div
+            className={classNames('h-12 leading-[3rem] px-2', className)}
+            {...props}
+        >
             {children}
         </div>
     );

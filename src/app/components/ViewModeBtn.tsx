@@ -1,4 +1,4 @@
-import { ViewMode } from '@custom-types/view-mode';
+import { ViewMode } from '@custom-types/viewMode';
 import { MdViewModule, MdOutlineViewList } from 'react-icons/md';
 import IconBtn from './IconBtn';
 

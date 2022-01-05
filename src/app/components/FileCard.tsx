@@ -1,4 +1,4 @@
-import { ObjectType } from '@custom-types/object-type';
+import { CloudObject } from '@custom-types/object';
 import classNames from 'classnames';
 import { MdStar, MdOutlineStarOutline } from 'react-icons/md';
 
@@ -10,7 +10,7 @@ export default function FileCard({
     onStarChange,
     onSelectChange,
 }: {
-    type: ObjectType;
+    type: CloudObject['type'];
     name: string;
     selected?: boolean;
     starred?: boolean;
