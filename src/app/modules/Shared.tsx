@@ -2,8 +2,9 @@ import { MdFolder, MdInfo, MdPeopleAlt } from 'react-icons/md';
 import AreaHeader from '@components/AreaHeader';
 import ViewModeBtn, { changeViewMode } from '@components/ViewModeBtn';
 import { useState } from 'react';
-import { ViewMode } from '@custom-types/view-mode';
+import { ViewMode } from '@custom-types/viewMode';
 import SortBtn from '@components/SortBtn';
+import List from '@components/List';
 
 export default function Shared() {
     const [viewMode, setViewMode] = useState<ViewMode>('list');
@@ -23,76 +24,75 @@ export default function Shared() {
                     ></ViewModeBtn>
                 </div>
             </section>
-            <div>
-                <div className="hidden md:block">
-                    <div className="flex p-3 font-bold leading-[34px]">
-                        <div className="w-[40px]"></div>
-                        <div className="px-2 flex-grow flex items-center">
-                            Name
-                            <SortBtn asc={true} className="text-lg"></SortBtn>
-                        </div>
-                        <div className="px-2 w-[170px] flex-shrink-0">
-                            Last modified
-                        </div>
-                        <div className="px-2 w-[120px]">Owner</div>
-                        <div className="px-2 w-[120px]">Size</div>
+            <List>
+                <List.Header className="hidden md:flex leading-[34px]">
+                    <div className="px-2 flex-grow flex items-center">
+                        Name
+                        <SortBtn asc={true} className="text-lg"></SortBtn>
                     </div>
-                </div>
-                <div className="py-1">
-                    <div className="flex items-center p-3 bg-white rounded">
-                        <div className="px-2 flex-shrink-0">
+                    <div className="px-2 w-[170px] flex-shrink-0">
+                        Last modified
+                    </div>
+                    <div className="px-2 w-[120px]">Owner</div>
+                    <div className="px-2 w-[120px]">Size</div>
+                </List.Header>
+                <List.Body>
+                    <List.Row>
+                        <List.Col>
                             <MdFolder className="text-2xl"></MdFolder>
-                        </div>
-                        <div className="px-2 flex-grow truncate">business</div>
-                        <div className="hidden md:block px-2 w-[170px] flex-shrink-0">
+                        </List.Col>
+                        <List.Col className="flex-grow">business</List.Col>
+                        <List.Col className="w-[170px] hidden md:block">
                             2019/09/02
-                        </div>
-                        <div className="hidden md:block px-2 w-[120px] truncate">
+                        </List.Col>
+                        <List.Col className="w-[120px] hidden md:block">
                             Me
-                        </div>
-                        <div className="hidden md:block px-2 w-[120px] truncate">
+                        </List.Col>
+                        <List.Col className="w-[120px] hidden md:block">
                             1.33 GB
-                        </div>
-                        <MdInfo className="text-xl md:hidden"></MdInfo>
-                    </div>
-                </div>
-                <div className="py-1">
-                    <div className="flex p-3 bg-white rounded">
-                        <div className="px-2 flex-shrink-0">
+                        </List.Col>
+                        <List.Col className="md:hidden">
+                            <MdInfo className="text-xl my-[2px]"></MdInfo>
+                        </List.Col>
+                    </List.Row>
+                    <List.Row>
+                        <List.Col>
                             <MdFolder className="text-2xl"></MdFolder>
-                        </div>
-                        <div className="px-2 flex-grow truncate">business</div>
-                        <div className="hidden md:block px-2 w-[170px] flex-shrink-0">
+                        </List.Col>
+                        <List.Col className="flex-grow">business</List.Col>
+                        <List.Col className="w-[170px] hidden md:block">
                             2019/09/02
-                        </div>
-                        <div className="hidden md:block px-2 w-[120px] truncate">
+                        </List.Col>
+                        <List.Col className="w-[120px] hidden md:block">
                             Me
-                        </div>
-                        <div className="hidden md:block px-2 w-[120px] truncate">
+                        </List.Col>
+                        <List.Col className="w-[120px] hidden md:block">
                             1.33 GB
-                        </div>
-                        <MdInfo className="text-xl md:hidden"></MdInfo>
-                    </div>
-                </div>
-                <div className="py-1">
-                    <div className="flex p-3 bg-white rounded">
-                        <div className="px-2 flex-shrink-0">
+                        </List.Col>
+                        <List.Col className="md:hidden">
+                            <MdInfo className="text-xl my-[2px]"></MdInfo>
+                        </List.Col>
+                    </List.Row>
+                    <List.Row>
+                        <List.Col>
                             <MdFolder className="text-2xl"></MdFolder>
-                        </div>
-                        <div className="px-2 flex-grow truncate">business</div>
-                        <div className="hidden md:block px-2 w-[170px] flex-shrink-0">
+                        </List.Col>
+                        <List.Col className="flex-grow">business</List.Col>
+                        <List.Col className="w-[170px] hidden md:block">
                             2019/09/02
-                        </div>
-                        <div className="hidden md:block px-2 w-[120px] truncate">
+                        </List.Col>
+                        <List.Col className="w-[120px] hidden md:block">
                             Me
-                        </div>
-                        <div className="hidden md:block px-2 w-[120px] truncate">
+                        </List.Col>
+                        <List.Col className="w-[120px] hidden md:block">
                             1.33 GB
-                        </div>
-                        <MdInfo className="text-xl md:hidden"></MdInfo>
-                    </div>
-                </div>
-            </div>
+                        </List.Col>
+                        <List.Col className="md:hidden">
+                            <MdInfo className="text-xl my-[2px]"></MdInfo>
+                        </List.Col>
+                    </List.Row>
+                </List.Body>
+            </List>
         </div>
     );
 }
