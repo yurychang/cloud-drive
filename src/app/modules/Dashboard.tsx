@@ -13,6 +13,8 @@ import ViewModeBtn, { changeViewMode } from '@components/ViewModeBtn';
 import SortBtn from '@components/SortBtn';
 import { CloudObject } from '@custom-types/object';
 import List from '@components/List';
+import { getMyObjectApi } from '../api';
+import { useMyObject } from '../features/object';
 
 const myDriveApi: CloudObject[] = Array.from({ length: 12 }, (v, k) => ({
     id: k,
@@ -27,13 +29,9 @@ const myDriveApi: CloudObject[] = Array.from({ length: 12 }, (v, k) => ({
 
 export default function Dashboard() {
     const [viewMode, setViewMode] = useState<ViewMode>('card');
-    const [myDriveData, setMyDriveData] = useState<CloudObject[]>([]);
-    const myFolderList = myDriveData.filter((item) => item.type === 'folder');
-    const myFileList = myDriveData.filter((item) => item.type !== 'folder');
-
-    useEffect(() => {
-        setMyDriveData(myDriveApi);
-    }, [myDriveData]);
+    const { myObject = [] } = useMyObject();
+    const myFolderList = myObject.filter((item) => item.type === 'folder');
+    const myFileList = myObject.filter((item) => item.type !== 'folder');
 
     return (
         <div className="px-8 py-8 overflow-hidden">
@@ -43,18 +41,6 @@ export default function Dashboard() {
                     title="Recent"
                 ></AreaHeader>
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                    <div>
-                        <FileCard
-                            type="file"
-                            name="sdf adfas asdfsaas sdfasf"
-                        ></FileCard>
-                    </div>
-                    <div>
-                        <FileCard
-                            type="file"
-                            name="sdf adfas asdfsaas sdfasf"
-                        ></FileCard>
-                    </div>
                     <div>
                         <FileCard
                             type="file"
@@ -127,7 +113,7 @@ export default function Dashboard() {
                             <List.Col className="w-[120px]">Size</List.Col>
                         </List.Header>
                         <List.Body>
-                            {myDriveData.map((item) => (
+                            {myObject.map((item) => (
                                 <List.Row key={item.id}>
                                     <List.Col className="relative before:block before:w-6">
                                         <MdFolder className="absolute top-1/2 -translate-y-1/2 text-2xl"></MdFolder>

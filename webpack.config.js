@@ -2,6 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = function (env, args) {
     const isEnvProduction = process.env.NODE_ENV === 'production';
@@ -80,6 +82,10 @@ module.exports = function (env, args) {
                 template: './src/index.html',
             }),
             !isEnvProduction && new ReactRefreshWebpackPlugin(),
+            new CopyPlugin({
+                patterns: [{ from: 'public' }],
+            }),
+            isEnvProduction && new CleanWebpackPlugin(),
         ].filter(Boolean),
     };
 };
