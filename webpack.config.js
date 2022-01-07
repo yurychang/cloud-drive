@@ -4,6 +4,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = function (env, args) {
     const isEnvProduction = process.env.NODE_ENV === 'production';
@@ -20,6 +21,12 @@ module.exports = function (env, args) {
         },
         module: {
             rules: [
+                {
+                    enforce: 'pre',
+                    exclude: /@babel(?:\/|\\{1,2})runtime|@mswjs/,
+                    test: /\.(js|mjs|jsx|ts|tsx|css)$/,
+                    use: ['source-map-loader'],
+                },
                 {
                     oneOf: [
                         {
@@ -86,6 +93,19 @@ module.exports = function (env, args) {
                 patterns: [{ from: 'public' }],
             }),
             isEnvProduction && new CleanWebpackPlugin(),
+            new ForkTsCheckerWebpackPlugin({
+                eslint: {
+                    files: './src/**/*.{ts,tsx,js,jsx}',
+                },
+                typescript: {
+                    enabled: true,
+                },
+                logger: {
+                    infrastructure: 'silent',
+                    issues: 'console',
+                    devServer: false,
+                },
+            }),
         ].filter(Boolean),
     };
 };
