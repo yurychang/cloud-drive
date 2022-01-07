@@ -14,11 +14,16 @@ const myObjectList: CloudObject[] = Array.from({ length: 12 }, (v, k) => ({
 }));
 
 export default [
-    rest.get(appSetting.apiUrl + '/objects/my', (req, res, ctx) => {
+    rest.get(appSetting.apiUrl + '/objects', (req, res, ctx) => {
+        const path = req.url.searchParams.get('path') || '/';
+
         return res(
             ctx.status(200),
             ctx.json({
-                data: myObjectList,
+                data: myObjectList.map((object) => ({
+                    ...object,
+                    path: path,
+                })),
             })
         );
     }),

@@ -6,7 +6,17 @@ const ObjectRequest = axios.create({
     baseURL: appSetting.apiUrl + '/objects',
 });
 
-export const getMyObjectApi = () =>
-    ObjectRequest.get<{ data: CloudObject[] }>('/my').then(
-        (res) => res.data.data
-    );
+export interface GetMyObjectApiProps {
+    path?: string;
+    sortBy?: string;
+    asc?: boolean;
+}
+
+export const getMyObjectApi = ({ path, sortBy, asc }: GetMyObjectApiProps) =>
+    ObjectRequest.get<{ data: CloudObject[] }>('', {
+        params: {
+            path,
+            sortBy,
+            asc,
+        },
+    }).then((res) => res.data.data);

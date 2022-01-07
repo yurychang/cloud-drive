@@ -30,7 +30,17 @@ const myDriveApi: CloudObject[] = Array.from({ length: 12 }, (v, k) => ({
 
 export default function Dashboard() {
     const [viewMode, setViewMode] = useState<ViewMode>('card');
-    const { myObject = [] } = useMyObject();
+
+    const [folderHierarchy, setFolderHierarchy] = useState('/');
+    const folderPathAry = (
+        folderHierarchy.endsWith('/')
+            ? folderHierarchy.slice(0, -1)
+            : folderHierarchy
+    )
+        .split('/')
+        .filter(Boolean);
+
+    const { myObject = [] } = useMyObject({ path: folderHierarchy });
     const myFolderList = myObject.filter((item) => item.type === 'folder');
     const myFileList = myObject.filter((item) => item.type !== 'folder');
 
@@ -61,8 +71,29 @@ export default function Dashboard() {
                     Icon={MdCloudUpload}
                     title={
                         <Breadcrumb>
-                            <Breadcrumb.Item>My Drive</Breadcrumb.Item>
-                            <Breadcrumb.Item>My Drive</Breadcrumb.Item>
+                            <Breadcrumb.Item
+                                as="button"
+                                className="font-bold"
+                                onClick={() => setFolderHierarchy('/')}
+                            >
+                                My Drive
+                            </Breadcrumb.Item>
+                            {folderPathAry.map((item, index) => (
+                                <Breadcrumb.Item
+                                    key={index}
+                                    as="button"
+                                    className="font-bold"
+                                    onClick={() =>
+                                        setFolderHierarchy(
+                                            folderPathAry
+                                                .slice(0, index + 1)
+                                                .join('/')
+                                        )
+                                    }
+                                >
+                                    {item}
+                                </Breadcrumb.Item>
+                            ))}
                         </Breadcrumb>
                     }
                     tools={
@@ -83,6 +114,11 @@ export default function Dashboard() {
                                     <div key={item.id}>
                                         <FolderCard
                                             name={item.name}
+                                            onDoubleClick={() =>
+                                                setFolderHierarchy(
+                                                    item.path + '/' + item.name
+                                                )
+                                            }
                                         ></FolderCard>
                                     </div>
                                 ))}
@@ -120,9 +156,20 @@ export default function Dashboard() {
                         </List.Header>
                         <List.Body>
                             {myObject.map((item) => (
-                                <List.Row key={item.id}>
-                                    <List.Col className="relative before:block before:w-6">
-                                        <MdFolder className="absolute top-1/2 -translate-y-1/2 text-2xl"></MdFolder>
+                                <List.Row
+                                    key={item.id}
+                                    onDoubleClick={() => {
+                                        item.type === 'folder' &&
+                                            setFolderHierarchy(
+                                                item.path + '/' + item.name
+                                            );
+                                    }}
+                                >
+                                    <List.Col
+                                        alignCenter={true}
+                                        className="text-xl"
+                                    >
+                                        <MdFolder></MdFolder>
                                     </List.Col>
                                     <List.Col className="flex-grow">
                                         {item.name}
@@ -136,8 +183,11 @@ export default function Dashboard() {
                                     <List.Col className="w-[120px] hidden md:block">
                                         {item.size} GB
                                     </List.Col>
-                                    <List.Col className="md:hidden">
-                                        <MdInfo className="text-xl my-[2px]"></MdInfo>
+                                    <List.Col
+                                        alignCenter={true}
+                                        className="text-xl md:hidden"
+                                    >
+                                        <MdInfo></MdInfo>
                                     </List.Col>
                                 </List.Row>
                             ))}

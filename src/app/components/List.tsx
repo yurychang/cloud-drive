@@ -56,7 +56,10 @@ List.Row = function ListRow({
 }) {
     return (
         <div
-            className={classNames('flex px-2 bg-white rounded', className)}
+            className={classNames(
+                'flex px-2 h-12 leading-[3rem]  bg-white rounded',
+                className
+            )}
             {...props}
         >
             {children}
@@ -67,15 +70,23 @@ List.Row = function ListRow({
 List.Col = function ListCol({
     children,
     className = '',
+    alignCenter,
     ...props
 }: {
     children?: React.ReactNode;
     className?: string;
+    alignCenter?: boolean;
     [key: string]: any;
 }) {
     return (
         <div
-            className={classNames('h-12 leading-[3rem] px-2', className)}
+            className={classNames(
+                'relative px-2',
+                {
+                    [`flex items-center`]: alignCenter,
+                },
+                className
+            )}
             {...props}
         >
             {children}

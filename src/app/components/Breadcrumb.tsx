@@ -1,13 +1,12 @@
 import classNames from 'classnames';
 import toArray from 'rc-util/lib/Children/toArray';
-import { MdArrowForwardIos, MdOutlineKeyboardArrowRight } from 'react-icons/md';
+import React, { ReactNode } from 'react';
+import { IconType } from 'react-icons';
+import { MdOutlineKeyboardArrowRight } from 'react-icons/md';
 
-interface BreadcrumbInterface
-    extends React.FC<{
-        className?: string;
-    }> {
-    Item: React.FC;
-    Separator: React.FC;
+interface BreadcrumbInterface extends React.FC<React.ComponentProps<'div'>> {
+    Item: React.FC<{ as?: ReactNode } & React.ComponentProps<any>>;
+    Separator: React.FC<React.ComponentProps<IconType>>;
 }
 
 const Breadcrumb: BreadcrumbInterface = ({
@@ -17,7 +16,12 @@ const Breadcrumb: BreadcrumbInterface = ({
 }) => {
     const crumbs = toArray(children).flatMap((item, i) =>
         i > 0
-            ? [<BreadcrumbSeparator key={i}></BreadcrumbSeparator>, item]
+            ? [
+                  <BreadcrumbSeparator
+                      key={'BreadcrumbSeparator' + i}
+                  ></BreadcrumbSeparator>,
+                  item,
+              ]
             : [item]
     );
     return (
@@ -30,20 +34,18 @@ const Breadcrumb: BreadcrumbInterface = ({
     );
 };
 
-const BreadcrumbItem: React.FC<{ className?: string }> = ({
-    className,
-    children,
-    ...restProps
-}) => {
+const BreadcrumbItem: React.FC<
+    { as?: ReactNode } & React.ComponentProps<any>
+> = ({ className, children, as: Node = 'div', ...restProps }) => {
     return (
-        <div className={classNames(className)} {...restProps}>
+        <Node className={classNames(className)} {...restProps}>
             {children}
-        </div>
+        </Node>
     );
 };
 Breadcrumb.Item = BreadcrumbItem;
 
-const BreadcrumbSeparator: React.FC<{ className?: string }> = ({
+const BreadcrumbSeparator: React.FC<React.ComponentProps<IconType>> = ({
     className,
     ...restProps
 }) => {

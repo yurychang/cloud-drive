@@ -1,8 +1,10 @@
 import useSWR from 'swr';
-import { getMyObjectApi } from '../api';
+import { getMyObjectApi, GetMyObjectApiProps } from '../api';
 
-export const useMyObject = () => {
-    const { data, error } = useSWR('/object/my', getMyObjectApi);
+export const useMyObject = (params: GetMyObjectApiProps = {}) => {
+    const { data, error } = useSWR({ url: '/object', ...params }, () =>
+        getMyObjectApi(params)
+    );
 
     return { myObject: data, isLoading: !error && !data, isError: error };
 };
