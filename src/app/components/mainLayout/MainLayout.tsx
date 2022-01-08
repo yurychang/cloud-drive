@@ -132,7 +132,12 @@ export default function MainLayout() {
                     {navList.find((item) => matchNavItem(item))?.title}
                 </span>
             </header>
-            <main className="main-layout-content">
+            <main
+                className="main-layout-content"
+                onContextMenu={(e) => {
+                    e.preventDefault();
+                }}
+            >
                 <Outlet></Outlet>
             </main>
         </div>

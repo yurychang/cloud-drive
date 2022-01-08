@@ -20,3 +20,8 @@ export const getMyObjectApi = ({ path, sortBy, asc }: GetMyObjectApiProps) =>
             asc,
         },
     }).then((res) => res.data.data);
+
+export const getRecentObjectApi = () =>
+    ObjectRequest.get<{ data: CloudObject[] }>('recent').then(
+        (res) => res.data.data
+    );

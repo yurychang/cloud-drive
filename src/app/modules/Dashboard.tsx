@@ -13,20 +13,9 @@ import ViewModeBtn, { changeViewMode } from '@components/ViewModeBtn';
 import SortBtn from '@components/SortBtn';
 import { CloudObject } from '@custom-types/object';
 import List from '@components/List';
-import { getMyObjectApi } from '../api';
-import { useMyObject } from '../features/object';
+import { useMyObject, useRecentObject } from '../features/object';
 import Breadcrumb from '@components/Breadcrumb';
-
-const myDriveApi: CloudObject[] = Array.from({ length: 12 }, (v, k) => ({
-    id: k,
-    type: k % 2 === 0 ? 'folder' : 'file',
-    name: k % 2 === 0 ? `Folder ${k}` : `file ${k}`,
-    starred: k % 2 === 0,
-    size: Math.floor(Math.random() * 1000) / 10,
-    owner: 'me',
-    updateTime: new Date().toISOString(),
-    path: '',
-}));
+import ContextMenu from '@components/ContextMenu';
 
 export default function Dashboard() {
     const [viewMode, setViewMode] = useState<ViewMode>('card');
@@ -44,6 +33,8 @@ export default function Dashboard() {
     const myFolderList = myObject.filter((item) => item.type === 'folder');
     const myFileList = myObject.filter((item) => item.type !== 'folder');
 
+    const { recentObject = [] } = useRecentObject();
+
     return (
         <div className="px-8 py-8 overflow-hidden">
             <section>
@@ -51,20 +42,20 @@ export default function Dashboard() {
                     Icon={MdOutlineAccessTimeFilled}
                     title="Recent"
                 ></AreaHeader>
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                    <div>
-                        <FileCard
-                            type="file"
-                            name="sdf adfas asdfsaas sdfasf"
-                        ></FileCard>
+                {recentObject.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                        {recentObject.map((item, index) => (
+                            <div key={index}>
+                                <FileCard
+                                    type="file"
+                                    name={item.name}
+                                ></FileCard>
+                            </div>
+                        ))}
                     </div>
-                    <div>
-                        <FileCard
-                            type="file"
-                            name="sdf adfas asdfsaas sdfasf"
-                        ></FileCard>
-                    </div>
-                </div>
+                ) : (
+                    false
+                )}
             </section>
             <section className="mt-5">
                 <AreaHeader

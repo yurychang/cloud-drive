@@ -1,5 +1,9 @@
 import useSWR from 'swr';
-import { getMyObjectApi, GetMyObjectApiProps } from '../api';
+import {
+    getMyObjectApi,
+    GetMyObjectApiProps,
+    getRecentObjectApi,
+} from '../api';
 
 export const useMyObject = (params: GetMyObjectApiProps = {}) => {
     const { data, error } = useSWR({ url: '/object', ...params }, () =>
@@ -7,4 +11,10 @@ export const useMyObject = (params: GetMyObjectApiProps = {}) => {
     );
 
     return { myObject: data, isLoading: !error && !data, isError: error };
+};
+
+export const useRecentObject = () => {
+    const { data, error } = useSWR('/object/recent', getRecentObjectApi);
+
+    return { recentObject: data, isLoading: !error && !data, isError: error };
 };

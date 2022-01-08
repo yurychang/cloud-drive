@@ -1,6 +1,7 @@
 import { CloudObject } from '@custom-types/object';
 import classNames from 'classnames';
-import { MdStar, MdOutlineStarOutline } from 'react-icons/md';
+import { SyntheticEvent, useState } from 'react';
+import ContextMenu from './ContextMenu';
 
 export default function FileCard({
     type,
@@ -17,8 +18,6 @@ export default function FileCard({
     onStarChange?: (isStar: boolean) => void;
     onSelectChange?: (isSelect: boolean) => void;
 }) {
-    const StarIcon = starred ? MdStar : MdOutlineStarOutline;
-
     const cardClass = classNames([
         {
             'bg-yellow-200': selected,
@@ -29,12 +28,25 @@ export default function FileCard({
         'shadow-sm',
         'hover:shadow',
         'rounded',
+        'select-none',
     ]);
 
     return (
-        <div className={cardClass}>
-            <div className="h-[120px] bg-neutral-100"></div>
-            <p className="px-4 py-3 truncate bg-white">{name}</p>
-        </div>
+        <>
+            <ContextMenu
+                menuContent={
+                    <>
+                        <ContextMenu.Option>get link</ContextMenu.Option>
+                        <ContextMenu.Option>share</ContextMenu.Option>
+                        <ContextMenu.Option>download</ContextMenu.Option>
+                    </>
+                }
+            >
+                <div className={cardClass}>
+                    <div className="h-[120px] bg-neutral-100"></div>
+                    <p className="px-4 py-3 truncate bg-white">{name}</p>
+                </div>
+            </ContextMenu>
+        </>
     );
 }
