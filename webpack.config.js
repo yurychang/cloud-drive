@@ -102,7 +102,7 @@ module.exports = function (env, args) {
                 },
                 logger: {
                     infrastructure: 'silent',
-                    issues: 'console',
+                    issues: 'silent',
                     devServer: false,
                 },
             }),
