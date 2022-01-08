@@ -17,7 +17,7 @@ export default function ContextMenu({
     const [position, setPosition] = useState({ x: 0, y: 0 });
 
     const menuClassName = classNames(
-        'fixed z-50 flex flex-col py-1 rounded shadow-lg bg-white transition-opacity',
+        'fixed z-50 flex flex-col py-1 min-w-[150px] rounded shadow-lg bg-white transition-opacity',
         {
             invisible: !visible,
             'opacity-1': visible,

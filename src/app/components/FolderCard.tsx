@@ -22,6 +22,7 @@ export default function FolderCard({
                     <ContextMenu.Option>get link</ContextMenu.Option>
                     <ContextMenu.Option>share</ContextMenu.Option>
                     <ContextMenu.Option>download</ContextMenu.Option>
+                    <ContextMenu.Option>delete</ContextMenu.Option>
                 </>
             }
         >

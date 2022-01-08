@@ -4,6 +4,7 @@ import {
     MdCloudUpload,
     MdInfo,
     MdFolder,
+    MdInsertDriveFile,
 } from 'react-icons/md';
 import { ViewMode } from '@custom-types/viewMode';
 import AreaHeader from '@components/AreaHeader';
@@ -160,7 +161,11 @@ export default function Dashboard() {
                                         alignCenter={true}
                                         className="text-xl"
                                     >
-                                        <MdFolder></MdFolder>
+                                        {item.type === 'folder' ? (
+                                            <MdFolder />
+                                        ) : (
+                                            <MdInsertDriveFile />
+                                        )}
                                     </List.Col>
                                     <List.Col className="flex-grow">
                                         {item.name}

@@ -1,6 +1,6 @@
 import { CloudObject } from '@custom-types/object';
 import classNames from 'classnames';
-import { SyntheticEvent, useState } from 'react';
+import { MdInsertDriveFile } from 'react-icons/md';
 import ContextMenu from './ContextMenu';
 
 export default function FileCard({
@@ -39,12 +39,16 @@ export default function FileCard({
                         <ContextMenu.Option>get link</ContextMenu.Option>
                         <ContextMenu.Option>share</ContextMenu.Option>
                         <ContextMenu.Option>download</ContextMenu.Option>
+                        <ContextMenu.Option>delete</ContextMenu.Option>
                     </>
                 }
             >
                 <div className={cardClass}>
                     <div className="h-[120px] bg-neutral-100"></div>
-                    <p className="px-4 py-3 truncate bg-white">{name}</p>
+                    <div className="flex items-center px-4">
+                        <MdInsertDriveFile className="mr-3 text-xl" />
+                        <p className="py-3 truncate bg-white">{name}</p>
+                    </div>
                 </div>
             </ContextMenu>
         </>
