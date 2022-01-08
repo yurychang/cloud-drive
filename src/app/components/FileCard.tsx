@@ -10,6 +10,7 @@ export default function FileCard({
     starred = false,
     onStarChange,
     onSelectChange,
+    onDelete,
 }: {
     type: CloudObject['type'];
     name: string;
@@ -17,6 +18,7 @@ export default function FileCard({
     starred?: boolean;
     onStarChange?: (isStar: boolean) => void;
     onSelectChange?: (isSelect: boolean) => void;
+    onDelete?: () => void;
 }) {
     const cardClass = classNames([
         {
@@ -39,7 +41,9 @@ export default function FileCard({
                         <ContextMenu.Option>get link</ContextMenu.Option>
                         <ContextMenu.Option>share</ContextMenu.Option>
                         <ContextMenu.Option>download</ContextMenu.Option>
-                        <ContextMenu.Option>delete</ContextMenu.Option>
+                        <ContextMenu.Option onClick={onDelete}>
+                            delete
+                        </ContextMenu.Option>
                     </>
                 }
             >

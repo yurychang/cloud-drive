@@ -25,3 +25,6 @@ export const getRecentObjectApi = () =>
     ObjectRequest.get<{ data: CloudObject[] }>('recent').then(
         (res) => res.data.data
     );
+
+export const deleteObjectApi = (id: string) =>
+    ObjectRequest.delete(`${id}`).then((res) => res.data.error);

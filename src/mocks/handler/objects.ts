@@ -2,19 +2,23 @@ import { rest } from 'msw';
 import { CloudObject } from '@custom-types/object';
 import { appSetting } from 'src/app/appSetting';
 
+const objectDb: { [key: string]: CloudObject[] } = {};
+
 export default [
     rest.get(appSetting.apiUrl + '/objects', (req, res, ctx) => {
         const path = req.url.searchParams.get('path') || '/';
+        const objects = (objectDb[path] =
+            objectDb[path] ||
+            createObjects(Math.round(Math.random() * 15)).map((object) => ({
+                ...object,
+                id: `object${path.replace('/', '-')}_${object.id}`,
+                path: path,
+            })));
 
         return res(
             ctx.status(200),
             ctx.json({
-                data: createObjects(Math.round(Math.random() * 15)).map(
-                    (object) => ({
-                        ...object,
-                        path: path,
-                    })
-                ),
+                data: objects,
             })
         );
     }),
@@ -33,6 +37,17 @@ export default [
                 data: createObjects(8),
             })
         );
+    }),
+    rest.delete(appSetting.apiUrl + '/objects/:id', (req, res, ctx) => {
+        const id = req.params.id;
+        const hasObject = Object.entries(objectDb).find(([path, objs]) => {
+            const obj = objs.find(({ id: oid }) => oid === id);
+            if (obj) {
+                objectDb[path] = objs.filter((o) => o.id !== id);
+            }
+            return obj;
+        });
+        return res(ctx.status(200), ctx.json({}));
     }),
 ];
 

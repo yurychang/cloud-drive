@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
     MdOutlineAccessTimeFilled,
     MdCloudUpload,
@@ -12,16 +12,15 @@ import FileCard from '@components/FileCard';
 import FolderCard from '@components/FolderCard';
 import ViewModeBtn, { changeViewMode } from '@components/ViewModeBtn';
 import SortBtn from '@components/SortBtn';
-import { CloudObject } from '@custom-types/object';
 import List from '@components/List';
 import { useMyObject, useRecentObject } from '../features/object';
 import Breadcrumb from '@components/Breadcrumb';
-import ContextMenu from '@components/ContextMenu';
 
 export default function Dashboard() {
     const [viewMode, setViewMode] = useState<ViewMode>('card');
 
     const [folderHierarchy, setFolderHierarchy] = useState('/');
+
     const folderPathAry = (
         folderHierarchy.endsWith('/')
             ? folderHierarchy.slice(0, -1)
@@ -30,7 +29,7 @@ export default function Dashboard() {
         .split('/')
         .filter(Boolean);
 
-    const { myObject = [] } = useMyObject({ path: folderHierarchy });
+    const { myObject, deleteObject } = useMyObject({ path: folderHierarchy });
     const myFolderList = myObject.filter((item) => item.type === 'folder');
     const myFileList = myObject.filter((item) => item.type !== 'folder');
 
@@ -75,13 +74,17 @@ export default function Dashboard() {
                                     key={index}
                                     as="button"
                                     className="font-bold"
-                                    onClick={() =>
+                                    onClick={() => {
                                         setFolderHierarchy(
-                                            folderPathAry
-                                                .slice(0, index + 1)
-                                                .join('/')
-                                        )
-                                    }
+                                            [
+                                                '',
+                                                folderPathAry.slice(
+                                                    0,
+                                                    index + 1
+                                                ),
+                                            ].join('/')
+                                        );
+                                    }}
                                 >
                                     {item}
                                 </Breadcrumb.Item>
@@ -108,7 +111,10 @@ export default function Dashboard() {
                                             name={item.name}
                                             onDoubleClick={() =>
                                                 setFolderHierarchy(
-                                                    item.path + '/' + item.name
+                                                    (item.path === '/'
+                                                        ? '/'
+                                                        : item.path + '/') +
+                                                        item.name
                                                 )
                                             }
                                         ></FolderCard>
@@ -124,6 +130,9 @@ export default function Dashboard() {
                                         <FileCard
                                             type="file"
                                             name={item.name}
+                                            onDelete={() => {
+                                                deleteObject(item.id);
+                                            }}
                                         ></FileCard>
                                     </div>
                                 ))}
@@ -153,7 +162,10 @@ export default function Dashboard() {
                                     onDoubleClick={() => {
                                         item.type === 'folder' &&
                                             setFolderHierarchy(
-                                                item.path + '/' + item.name
+                                                (item.path === '/'
+                                                    ? '/'
+                                                    : item.path + '/') +
+                                                    item.name
                                             );
                                     }}
                                 >

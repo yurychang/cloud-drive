@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { PropsWithChildren, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 type ContextMenuProps = PropsWithChildren<
@@ -13,11 +13,12 @@ export default function ContextMenu({
     menuContent,
     ...restProps
 }: ContextMenuProps) {
+    const host = useRef(null);
     const [visible, setVisible] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
 
     const menuClassName = classNames(
-        'fixed z-50 flex flex-col py-1 min-w-[150px] rounded shadow-lg bg-white transition-opacity',
+        'absolute flex flex-col py-1 min-w-[150px] rounded shadow-lg bg-white transition-opacity',
         {
             invisible: !visible,
             'opacity-1': visible,
@@ -25,54 +26,74 @@ export default function ContextMenu({
         }
     );
 
-    useEffect(() => {
-        const handler = () => {
-            setVisible(false);
-        };
-        document.body.addEventListener('pointerdown', handler);
+    const showMenuFromEvent = (e: React.MouseEvent) => {
+        const { left, right, top, bottom } = (
+            host.current as unknown as HTMLElement
+        ).getBoundingClientRect();
+        const onHost =
+            e.clientX >= left &&
+            e.clientX <= right &&
+            e.clientY >= top &&
+            e.clientY <= bottom;
 
-        return () => {
-            document.body.removeEventListener('pointerdown', handler);
-        };
-    }, []);
+        if (onHost) {
+            setPosition({
+                x: e.clientX,
+                y: e.clientY,
+            });
+            setVisible(true);
+        } else {
+            setVisible(false);
+        }
+    };
 
     return (
         <>
             <div
+                ref={host}
                 onContextMenu={(e) => {
                     e.preventDefault();
-                    setVisible(true);
-                    setPosition({
-                        x: e.clientX,
-                        y: e.clientY,
-                    });
+                    showMenuFromEvent(e);
                 }}
                 {...restProps}
             >
                 {children}
+                {visible &&
+                    createPortal(
+                        <>
+                            <div
+                                className="fixed inset-0 z-50 "
+                                onClick={() => {
+                                    setVisible(false);
+                                }}
+                            >
+                                <div
+                                    className={menuClassName}
+                                    style={{
+                                        top: `${position.y}px`,
+                                        left: `${position.x}px`,
+                                    }}
+                                >
+                                    {menuContent}
+                                </div>
+                            </div>
+                        </>,
+                        document.body
+                    )}
             </div>
-            {visible &&
-                createPortal(
-                    <div
-                        className={menuClassName}
-                        style={{
-                            top: `${position.y}px`,
-                            left: `${position.x}px`,
-                        }}
-                    >
-                        {menuContent}
-                    </div>,
-                    document.body
-                )}
         </>
     );
 }
 
 function ContextMenuOption({
     children,
-}: PropsWithChildren<React.ComponentProps<'div'>>) {
+    ...restProps
+}: PropsWithChildren<React.ComponentProps<'button'>>) {
     return (
-        <button className="px-4 py-2 text-left hover:bg-gray-100">
+        <button
+            className="px-4 py-2 text-left hover:bg-gray-100"
+            {...restProps}
+        >
             {children}
         </button>
     );
