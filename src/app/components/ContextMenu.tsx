@@ -47,40 +47,45 @@ export default function ContextMenu({
         }
     };
 
+    const child = React.Children.only(children) as React.ReactElement;
+    const contextMenu = React.cloneElement(child, {
+        ref: host,
+        onContextMenu: (e: React.MouseEvent) => {
+            e.preventDefault();
+            showMenuFromEvent(e);
+        },
+        ...restProps,
+    });
+
     return (
         <>
-            <div
-                ref={host}
-                onContextMenu={(e) => {
-                    e.preventDefault();
-                    showMenuFromEvent(e);
-                }}
-                {...restProps}
-            >
-                {children}
-                {visible &&
-                    createPortal(
-                        <>
+            {contextMenu}
+            {visible &&
+                createPortal(
+                    <>
+                        <div
+                            className="fixed inset-0 z-50 "
+                            onClick={() => {
+                                setVisible(false);
+                            }}
+                            onContextMenu={(e) => {
+                                e.preventDefault();
+                                showMenuFromEvent(e);
+                            }}
+                        >
                             <div
-                                className="fixed inset-0 z-50 "
-                                onClick={() => {
-                                    setVisible(false);
+                                className={menuClassName}
+                                style={{
+                                    top: `${position.y}px`,
+                                    left: `${position.x}px`,
                                 }}
                             >
-                                <div
-                                    className={menuClassName}
-                                    style={{
-                                        top: `${position.y}px`,
-                                        left: `${position.x}px`,
-                                    }}
-                                >
-                                    {menuContent}
-                                </div>
+                                {menuContent}
                             </div>
-                        </>,
-                        document.body
-                    )}
-            </div>
+                        </div>
+                    </>,
+                    document.body
+                )}
         </>
     );
 }
