@@ -9,9 +9,9 @@ export default [
         const path = req.url.searchParams.get('path') || '/';
         const objects = (objectDb[path] =
             objectDb[path] ||
-            createObjects(Math.round(Math.random() * 15)).map((object) => ({
+            createObjects(Math.round(Math.random() * 15)).map(object => ({
                 ...object,
-                id: `object${path.replace('/', '-')}_${object.id}`,
+                id: `object${path.replaceAll('/', '-')}_${object.id}`,
                 path: path,
             })));
 
@@ -43,7 +43,7 @@ export default [
         const hasObject = Object.entries(objectDb).find(([path, objs]) => {
             const obj = objs.find(({ id: oid }) => oid === id);
             if (obj) {
-                objectDb[path] = objs.filter((o) => o.id !== id);
+                objectDb[path] = objs.filter(o => o.id !== id);
             }
             return obj;
         });

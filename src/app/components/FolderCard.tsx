@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { MdFolder } from 'react-icons/md';
 import ContextMenu from './ContextMenu';
 
@@ -7,6 +8,7 @@ export default function FolderCard({
     starred = false,
     onStarChange,
     onSelectChange,
+    className,
     ...restProps
 }: {
     name: string;
@@ -27,7 +29,10 @@ export default function FolderCard({
             }
         >
             <div
-                className="px-4 py-4 flex items-center bg-white overflow-hidden shadow-sm select-none hover:shadow rounded"
+                className={classNames(
+                    'px-4 py-4 flex items-center bg-white overflow-hidden shadow-sm select-none hover:shadow rounded',
+                    className
+                )}
                 {...restProps}
             >
                 <MdFolder className="mr-3 text-xl flex-shrink-0"></MdFolder>

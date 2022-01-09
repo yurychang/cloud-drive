@@ -30,8 +30,8 @@ export default function Dashboard() {
         .filter(Boolean);
 
     const { myObject, deleteObject } = useMyObject({ path: folderHierarchy });
-    const myFolderList = myObject.filter((item) => item.type === 'folder');
-    const myFileList = myObject.filter((item) => item.type !== 'folder');
+    const myFolderList = myObject.filter(item => item.type === 'folder');
+    const myFileList = myObject.filter(item => item.type !== 'folder');
 
     const { recentObject = [] } = useRecentObject();
 
@@ -104,9 +104,41 @@ export default function Dashboard() {
                     <>
                         <div>
                             <p className="mb-4 font-bold">Folders</p>
-                            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                                {myFolderList.map((item) => (
-                                    <div key={item.id}>
+                            <div className="grid gap-0 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                                {myFolderList.map(item => (
+                                    <div
+                                        key={item.id}
+                                        draggable={true}
+                                        onDragStart={e => {
+                                            e.dataTransfer.setData(
+                                                'text/plain',
+                                                item.id
+                                            );
+                                        }}
+                                        onDragEnter={e => {
+                                            e.currentTarget.classList.add(
+                                                'bg-yellow-300/20',
+                                                'border-opacity-100'
+                                            );
+                                        }}
+                                        onDragLeave={e => {
+                                            e.currentTarget.classList.remove(
+                                                'bg-yellow-300/20',
+                                                'border-opacity-100'
+                                            );
+                                        }}
+                                        onDrop={e => {
+                                            e.currentTarget.classList.remove(
+                                                'bg-yellow-300/20',
+                                                'border-opacity-100'
+                                            );
+                                        }}
+                                        onDragOver={e => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                        }}
+                                        className="p-1 border-2 border-yellow-400 border-opacity-0"
+                                    >
                                         <FolderCard
                                             name={item.name}
                                             onDoubleClick={() =>
@@ -117,6 +149,7 @@ export default function Dashboard() {
                                                         item.name
                                                 )
                                             }
+                                            className="pointer-events-none"
                                         ></FolderCard>
                                     </div>
                                 ))}
@@ -125,7 +158,7 @@ export default function Dashboard() {
                         <div className="mt-4">
                             <p className="mb-4 font-bold">Files</p>
                             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                                {myFileList.map((item) => (
+                                {myFileList.map(item => (
                                     <div key={item.id}>
                                         <FileCard
                                             type="file"
@@ -156,7 +189,7 @@ export default function Dashboard() {
                             <List.Col className="w-[120px]">Size</List.Col>
                         </List.Header>
                         <List.Body>
-                            {myObject.map((item) => (
+                            {myObject.map(item => (
                                 <List.Row
                                     key={item.id}
                                     onDoubleClick={() => {
