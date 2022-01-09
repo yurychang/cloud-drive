@@ -15,6 +15,8 @@ import SortBtn from '@components/SortBtn';
 import List from '@components/List';
 import { useMyObject, useRecentObject } from '../features/object';
 import Breadcrumb from '@components/Breadcrumb';
+import DragDrop from '@components/DragDrop';
+import classNames from 'classnames';
 
 export default function Dashboard() {
     const [viewMode, setViewMode] = useState<ViewMode>('card');
@@ -106,36 +108,21 @@ export default function Dashboard() {
                             <p className="mb-4 font-bold">Folders</p>
                             <div className="grid gap-0 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                                 {myFolderList.map(item => (
-                                    <div
+                                    <DragDrop
                                         key={item.id}
                                         draggable={true}
+                                        dragOverClass={(isOver, dragging) =>
+                                            (isOver &&
+                                                !dragging &&
+                                                'bg-yellow-300/20 border-opacity-100') ||
+                                            ''
+                                        }
+                                        draggingClass={() => 'opacity-50'}
                                         onDragStart={e => {
                                             e.dataTransfer.setData(
                                                 'text/plain',
                                                 item.id
                                             );
-                                        }}
-                                        onDragEnter={e => {
-                                            e.currentTarget.classList.add(
-                                                'bg-yellow-300/20',
-                                                'border-opacity-100'
-                                            );
-                                        }}
-                                        onDragLeave={e => {
-                                            e.currentTarget.classList.remove(
-                                                'bg-yellow-300/20',
-                                                'border-opacity-100'
-                                            );
-                                        }}
-                                        onDrop={e => {
-                                            e.currentTarget.classList.remove(
-                                                'bg-yellow-300/20',
-                                                'border-opacity-100'
-                                            );
-                                        }}
-                                        onDragOver={e => {
-                                            e.stopPropagation();
-                                            e.preventDefault();
                                         }}
                                         className="p-1 border-2 border-yellow-400 border-opacity-0"
                                     >
@@ -151,7 +138,7 @@ export default function Dashboard() {
                                             }
                                             className="pointer-events-none"
                                         ></FolderCard>
-                                    </div>
+                                    </DragDrop>
                                 ))}
                             </div>
                         </div>

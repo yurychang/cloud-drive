@@ -68,7 +68,7 @@ export default function ContextMenu({
                             onClick={() => {
                                 setVisible(false);
                             }}
-                            onContextMenu={(e) => {
+                            onContextMenu={e => {
                                 e.preventDefault();
                                 showMenuFromEvent(e);
                             }}
