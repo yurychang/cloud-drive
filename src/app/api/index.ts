@@ -19,12 +19,22 @@ export const getMyObjectApi = ({ path, sortBy, asc }: GetMyObjectApiProps) =>
             sortBy,
             asc,
         },
-    }).then((res) => res.data.data);
+    }).then(res => res.data.data);
 
 export const getRecentObjectApi = () =>
     ObjectRequest.get<{ data: CloudObject[] }>('recent').then(
-        (res) => res.data.data
+        res => res.data.data
     );
 
 export const deleteObjectApi = (id: string) =>
-    ObjectRequest.delete(`${id}`).then((res) => res.data.error);
+    ObjectRequest.delete(`${id}`).then(res => res.data.error);
+
+export const updateObjectApi = (
+    id: string,
+    updateProps: Partial<Pick<CloudObject, 'id' | 'name' | 'path' | 'starred'>>
+) =>
+    ObjectRequest.post(`${id}`, updateProps, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }).then(res => res.data);

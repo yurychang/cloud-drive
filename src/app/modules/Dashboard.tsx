@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
     MdOutlineAccessTimeFilled,
     MdCloudUpload,
@@ -13,15 +13,21 @@ import FolderCard from '@components/FolderCard';
 import ViewModeBtn, { changeViewMode } from '@components/ViewModeBtn';
 import SortBtn from '@components/SortBtn';
 import List from '@components/List';
-import { useMyObject, useRecentObject } from '../features/object';
+import {
+    useMyObject,
+    useRecentObject,
+    useUpdateObject,
+} from '../features/object';
 import Breadcrumb from '@components/Breadcrumb';
 import DragDrop from '@components/DragDrop';
-import classNames from 'classnames';
+import { CloudObject } from '@custom-types/object';
 
 export default function Dashboard() {
     const [viewMode, setViewMode] = useState<ViewMode>('card');
 
     const [folderHierarchy, setFolderHierarchy] = useState('/');
+
+    const updateObject = useUpdateObject();
 
     const folderPathAry = (
         folderHierarchy.endsWith('/')
@@ -31,11 +37,22 @@ export default function Dashboard() {
         .split('/')
         .filter(Boolean);
 
-    const { myObject, deleteObject } = useMyObject({ path: folderHierarchy });
-    const myFolderList = myObject.filter(item => item.type === 'folder');
-    const myFileList = myObject.filter(item => item.type !== 'folder');
+    const { myObjects, deleteObject } = useMyObject({ path: folderHierarchy });
+    const myFolderList = myObjects.filter(item => item.type === 'folder');
+    const myFileList = myObjects.filter(item => item.type !== 'folder');
 
     const { recentObject = [] } = useRecentObject();
+
+    const dragObjectStart = (e: React.DragEvent, item: CloudObject) => {
+        e.dataTransfer.setData('id', item.id);
+    };
+
+    const dropObject = (e: React.DragEvent, item: CloudObject) => {
+        const targetId = e.dataTransfer.getData('id');
+        updateObject(targetId, {
+            path: (item.path === '/' ? '/' : item.path + '/') + item.name,
+        });
+    };
 
     return (
         <div className="px-8 py-8 overflow-hidden">
@@ -80,7 +97,7 @@ export default function Dashboard() {
                                         setFolderHierarchy(
                                             [
                                                 '',
-                                                folderPathAry.slice(
+                                                ...folderPathAry.slice(
                                                     0,
                                                     index + 1
                                                 ),
@@ -110,21 +127,19 @@ export default function Dashboard() {
                                 {myFolderList.map(item => (
                                     <DragDrop
                                         key={item.id}
-                                        draggable={true}
                                         dragOverClass={(isOver, dragging) =>
-                                            (isOver &&
-                                                !dragging &&
-                                                'bg-yellow-300/20 border-opacity-100') ||
-                                            ''
+                                            isOver && !dragging
+                                                ? 'bg-yellow-300/20 border-opacity-100'
+                                                : 'border-opacity-0'
                                         }
-                                        draggingClass={() => 'opacity-50'}
-                                        onDragStart={e => {
-                                            e.dataTransfer.setData(
-                                                'text/plain',
-                                                item.id
-                                            );
-                                        }}
-                                        className="p-1 border-2 border-yellow-400 border-opacity-0"
+                                        draggingClass={isDragging =>
+                                            (isDragging && 'opacity-50') || ''
+                                        }
+                                        onDragStart={e =>
+                                            dragObjectStart(e, item)
+                                        }
+                                        onDrop={e => dropObject(e, item)}
+                                        className="p-1 border-2 border-yellow-400"
                                     >
                                         <FolderCard
                                             name={item.name}
@@ -136,7 +151,6 @@ export default function Dashboard() {
                                                         item.name
                                                 )
                                             }
-                                            className="pointer-events-none"
                                         ></FolderCard>
                                     </DragDrop>
                                 ))}
@@ -146,7 +160,15 @@ export default function Dashboard() {
                             <p className="mb-4 font-bold">Files</p>
                             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                                 {myFileList.map(item => (
-                                    <div key={item.id}>
+                                    <DragDrop
+                                        key={item.id}
+                                        draggingClass={isDragging =>
+                                            (isDragging && 'opacity-50') || ''
+                                        }
+                                        onDragStart={e =>
+                                            dragObjectStart(e, item)
+                                        }
+                                    >
                                         <FileCard
                                             type="file"
                                             name={item.name}
@@ -154,7 +176,7 @@ export default function Dashboard() {
                                                 deleteObject(item.id);
                                             }}
                                         ></FileCard>
-                                    </div>
+                                    </DragDrop>
                                 ))}
                             </div>
                         </div>
@@ -176,7 +198,7 @@ export default function Dashboard() {
                             <List.Col className="w-[120px]">Size</List.Col>
                         </List.Header>
                         <List.Body>
-                            {myObject.map(item => (
+                            {myObjects.map(item => (
                                 <List.Row
                                     key={item.id}
                                     onDoubleClick={() => {

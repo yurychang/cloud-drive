@@ -33,6 +33,8 @@
         "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
         "paths": {
             "@custom-types/*": ["src/app/types/*"],
+            "@features/*": ["src/app/features/*"],
+            "@hooks/*": ["src/app/hooks/*"],
             "@components/*": ["src/app/components/*"],
             "@modules/*": ["src/app/modules/*"]
         } /* Specify a set of entries that re-map imports to additional lookup locations. */,

@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { MockedRequest, rest } from 'msw';
 import { CloudObject } from '@custom-types/object';
 import { appSetting } from 'src/app/appSetting';
 
@@ -13,7 +13,7 @@ export default [
                 ...object,
                 id: `object${path.replaceAll('/', '-')}_${object.id}`,
                 path: path,
-            })));
+            }))).sort((a, b) => a.name.localeCompare(b.name));
 
         return res(
             ctx.status(200),
@@ -49,7 +49,54 @@ export default [
         });
         return res(ctx.status(200), ctx.json({}));
     }),
+    rest.post(appSetting.apiUrl + '/objects/:id', (req, res, ctx) => {
+        const id = req.params.id as string;
+        const updateData = req.body as Partial<
+            Pick<CloudObject, 'id' | 'name' | 'path' | 'starred'>
+        >;
+
+        return res(
+            ctx.status(200),
+            ctx.json({ data: updateObject(id, updateData) })
+        );
+    }),
 ];
+
+function getObjectFromDb(id: string) {
+    let obj: CloudObject | undefined;
+
+    Object.entries(objectDb).find(([path, objs]) => {
+        obj = objs.find(({ id: oid }) => oid === id);
+    });
+
+    return obj;
+}
+
+function updateObject(
+    id: string,
+    updateProps: Partial<Pick<CloudObject, 'id' | 'name' | 'path' | 'starred'>>
+) {
+    let obj: CloudObject | undefined;
+
+    Object.entries(objectDb).find(([path, objs]) => {
+        obj = objs.find(({ id: oid }) => oid === id);
+        if (obj) {
+            objectDb[path] = objs.filter(o => o.id !== id);
+            return true;
+        }
+    });
+
+    if (obj) {
+        obj = {
+            ...obj,
+            ...updateProps,
+        };
+
+        (objectDb[obj.path] = objectDb[obj.path] || []).push(obj);
+    }
+
+    return obj;
+}
 
 function createObjects(number: number): CloudObject[] {
     return Array.from({ length: number }, (v, k) => ({
