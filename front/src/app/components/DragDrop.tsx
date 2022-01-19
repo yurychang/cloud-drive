@@ -1,6 +1,18 @@
 import classNames from 'classnames';
 import React, { useCallback, useRef, useState } from 'react';
 
+export type DragDropProps = {
+    dragOverClass?: (
+        isDragOver: boolean,
+        isDragging: boolean
+    ) => Parameters<typeof classNames>[0];
+    draggingClass?: (
+        isDragging: boolean,
+        isDragOver: boolean
+    ) => Parameters<typeof classNames>[0];
+    as?: React.ElementType<any>;
+} & React.ComponentProps<'div'>;
+
 export default function DragDrop({
     dragOverClass,
     draggingClass,
@@ -14,17 +26,11 @@ export default function DragDrop({
     className,
     as: Component = 'div',
     ...restProps
-}: {
-    dragOverClass?: (isDragOver: boolean, isDragging: boolean) => string;
-    draggingClass?: (isDragging: boolean, isDragOver: boolean) => string;
-    as?: React.ElementType<any>;
-} & React.ComponentProps<'div'>) {
-    const dragDropEl = useRef<HTMLElement>();
+}: DragDropProps) {
     const [dragOver, setDragOver] = useState(false);
     const [dragging, setDragging] = useState(false);
 
     const dragDropProps = {
-        ref: dragDropEl,
         draggable,
         onDragStart: useCallback(
             (e: React.DragEvent<HTMLDivElement>) => {
@@ -57,7 +63,7 @@ export default function DragDrop({
         ),
         onDragLeave: useCallback(
             (e: React.DragEvent<any>) => {
-                const isContain = (dragDropEl.current as HTMLElement).contains(
+                const isContain = (e.currentTarget as HTMLElement).contains(
                     e.relatedTarget as HTMLElement
                 );
                 !isContain && setDragOver(false);

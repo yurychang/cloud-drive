@@ -29,13 +29,9 @@ export default function Dashboard() {
 
     const updateObject = useUpdateObject();
 
-    const folderPathAry = (
-        folderHierarchy.endsWith('/')
-            ? folderHierarchy.slice(0, -1)
-            : folderHierarchy
-    )
-        .split('/')
-        .filter(Boolean);
+    const folderPathAry = ['', ...folderHierarchy.split('/').filter(Boolean)];
+    const joinPath = (...paths: string[]) =>
+        '/' + paths.join('/').split('/').filter(Boolean).join('/');
 
     const { myObjects, deleteObject } = useMyObject({ path: folderHierarchy });
     const myFolderList = myObjects.filter(item => item.type === 'folder');
@@ -47,10 +43,10 @@ export default function Dashboard() {
         e.dataTransfer.setData('id', item.id);
     };
 
-    const dropObject = (e: React.DragEvent, item: CloudObject) => {
+    const moveObjectToPath = (e: React.DragEvent, path: string) => {
         const targetId = e.dataTransfer.getData('id');
         updateObject(targetId, {
-            path: (item.path === '/' ? '/' : item.path + '/') + item.name,
+            path,
         });
     };
 
@@ -81,13 +77,6 @@ export default function Dashboard() {
                     Icon={MdCloudUpload}
                     title={
                         <Breadcrumb>
-                            <Breadcrumb.Item
-                                as="button"
-                                className="font-bold"
-                                onClick={() => setFolderHierarchy('/')}
-                            >
-                                My Drive
-                            </Breadcrumb.Item>
                             {folderPathAry.map((item, index) => (
                                 <Breadcrumb.Item
                                     key={index}
@@ -95,17 +84,27 @@ export default function Dashboard() {
                                     className="font-bold"
                                     onClick={() => {
                                         setFolderHierarchy(
-                                            [
-                                                '',
+                                            joinPath(
                                                 ...folderPathAry.slice(
                                                     0,
                                                     index + 1
-                                                ),
-                                            ].join('/')
+                                                )
+                                            )
                                         );
                                     }}
+                                    onDrop={e =>
+                                        moveObjectToPath(
+                                            e,
+                                            joinPath(
+                                                ...folderPathAry.slice(
+                                                    0,
+                                                    index + 1
+                                                )
+                                            )
+                                        )
+                                    }
                                 >
-                                    {item}
+                                    {item === '' ? 'My Drive' : item}
                                 </Breadcrumb.Item>
                             ))}
                         </Breadcrumb>
@@ -138,17 +137,22 @@ export default function Dashboard() {
                                         onDragStart={e =>
                                             dragObjectStart(e, item)
                                         }
-                                        onDrop={e => dropObject(e, item)}
+                                        onDrop={e =>
+                                            moveObjectToPath(
+                                                e,
+                                                joinPath(item.path, item.name)
+                                            )
+                                        }
                                         className="p-1 border-2 border-yellow-400"
                                     >
                                         <FolderCard
                                             name={item.name}
                                             onDoubleClick={() =>
                                                 setFolderHierarchy(
-                                                    (item.path === '/'
-                                                        ? '/'
-                                                        : item.path + '/') +
+                                                    joinPath(
+                                                        item.path,
                                                         item.name
+                                                    )
                                                 )
                                             }
                                         ></FolderCard>
@@ -201,15 +205,21 @@ export default function Dashboard() {
                             {myObjects.map(item => (
                                 <List.Row
                                     key={item.id}
+                                    canDrop={item.type === 'folder'}
                                     onDoubleClick={() => {
                                         item.type === 'folder' &&
                                             setFolderHierarchy(
-                                                (item.path === '/'
-                                                    ? '/'
-                                                    : item.path + '/') +
-                                                    item.name
+                                                joinPath(item.path, item.name)
                                             );
                                     }}
+                                    onDragStart={e => dragObjectStart(e, item)}
+                                    onDrop={e =>
+                                        item.type === 'folder' &&
+                                        moveObjectToPath(
+                                            e,
+                                            joinPath(item.path, item.name)
+                                        )
+                                    }
                                 >
                                     <List.Col
                                         alignCenter={true}

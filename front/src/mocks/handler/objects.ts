@@ -7,6 +7,7 @@ const objectDb: { [key: string]: CloudObject[] } = {};
 export default [
     rest.get(appSetting.apiUrl + '/objects', (req, res, ctx) => {
         const path = req.url.searchParams.get('path') || '/';
+
         const objects = (objectDb[path] =
             objectDb[path] ||
             createObjects(Math.round(Math.random() * 15)).map(object => ({

@@ -1,4 +1,6 @@
+import React from 'react';
 import classNames from 'classnames';
+import DragDrop, { DragDropProps } from './DragDrop';
 
 export default function List({
     children,
@@ -48,22 +50,28 @@ List.Body = function ListBody({
 List.Row = function ListRow({
     children,
     className = '',
+    canDrop = false,
     ...props
 }: {
     children?: React.ReactNode;
     className?: string;
-    [key: string]: any;
-}) {
+    canDrop?: boolean;
+} & DragDropProps &
+    React.ComponentProps<'div'>) {
+    const dragOverClass = (isDragOver: boolean, isDragging: boolean) =>
+        canDrop && isDragOver && !isDragging ? 'bg-gray-200' : 'bg-white';
     return (
-        <div
+        <DragDrop
             className={classNames(
-                'flex px-2 h-12 leading-[3rem]  bg-white rounded',
+                'flex px-2 h-12 leading-[3rem] rounded',
+                { 'bg-white': !canDrop },
                 className
             )}
+            dragOverClass={dragOverClass}
             {...props}
         >
             {children}
-        </div>
+        </DragDrop>
     );
 };
 
