@@ -1,60 +1,26 @@
-import { CloudObject } from '@custom-types/object';
 import classNames from 'classnames';
 import { MdInsertDriveFile } from 'react-icons/md';
-import ContextMenu from './ContextMenu';
 
 export default function FileCard({
-    type,
     name,
-    selected = false,
-    starred = false,
-    onStarChange,
-    onSelectChange,
-    onDelete,
-}: {
-    type: CloudObject['type'];
-    name: string;
-    selected?: boolean;
-    starred?: boolean;
-    onStarChange?: (isStar: boolean) => void;
-    onSelectChange?: (isSelect: boolean) => void;
-    onDelete?: () => void;
-}) {
+    className,
+    ...restProps
+}: { name: string } & React.ComponentProps<'div'>) {
     const cardClass = classNames([
-        {
-            'bg-yellow-200': selected,
-            'bg-white': !selected,
-        },
         'relative',
         'overflow-hidden',
         'shadow-sm',
         'hover:shadow',
         'rounded',
-        'select-none',
     ]);
 
     return (
-        <>
-            <ContextMenu
-                menuContent={
-                    <>
-                        <ContextMenu.Option>get link</ContextMenu.Option>
-                        <ContextMenu.Option>share</ContextMenu.Option>
-                        <ContextMenu.Option>download</ContextMenu.Option>
-                        <ContextMenu.Option onClick={onDelete}>
-                            delete
-                        </ContextMenu.Option>
-                    </>
-                }
-            >
-                <div className={cardClass}>
-                    <div className="h-[120px] bg-neutral-100"></div>
-                    <div className="flex items-center px-4">
-                        <MdInsertDriveFile className="mr-3 text-xl" />
-                        <p className="py-3 truncate bg-white">{name}</p>
-                    </div>
-                </div>
-            </ContextMenu>
-        </>
+        <div className={classNames(cardClass, className)} {...restProps}>
+            <div className="h-[120px] bg-neutral-100"></div>
+            <div className="flex items-center px-4 bg-white">
+                <MdInsertDriveFile className="mr-3 text-xl" />
+                <p className="py-3 truncate">{name}</p>
+            </div>
+        </div>
     );
 }

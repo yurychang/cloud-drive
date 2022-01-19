@@ -19,8 +19,11 @@ import {
     useUpdateObject,
 } from '../features/object';
 import Breadcrumb from '@components/Breadcrumb';
-import DragDrop from '@components/DragDrop';
+import { DragDrop } from '@components/DragDrop';
 import { CloudObject } from '@custom-types/object';
+import ContextMenuTrigger from '@components/ContextMenu';
+import FileContextOptions from '@components/FileContextOptions';
+import FolderContextOptions from '@components/FolderContextOptions';
 
 export default function Dashboard() {
     const [viewMode, setViewMode] = useState<ViewMode>('card');
@@ -61,10 +64,7 @@ export default function Dashboard() {
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                         {recentObject.map((item, index) => (
                             <div key={index}>
-                                <FileCard
-                                    type="file"
-                                    name={item.name}
-                                ></FileCard>
+                                <FileCard name={item.name}></FileCard>
                             </div>
                         ))}
                     </div>
@@ -124,39 +124,51 @@ export default function Dashboard() {
                             <p className="mb-4 font-bold">Folders</p>
                             <div className="grid gap-0 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                                 {myFolderList.map(item => (
-                                    <DragDrop
+                                    <ContextMenuTrigger
                                         key={item.id}
-                                        dragOverClass={(isOver, dragging) =>
-                                            isOver && !dragging
-                                                ? 'bg-yellow-300/20 border-opacity-100'
-                                                : 'border-opacity-0'
+                                        menuContent={
+                                            <FolderContextOptions
+                                                id={item.id}
+                                            />
                                         }
-                                        draggingClass={isDragging =>
-                                            (isDragging && 'opacity-50') || ''
-                                        }
-                                        onDragStart={e =>
-                                            dragObjectStart(e, item)
-                                        }
-                                        onDrop={e =>
-                                            moveObjectToPath(
-                                                e,
-                                                joinPath(item.path, item.name)
-                                            )
-                                        }
-                                        className="p-1 border-2 border-yellow-400"
                                     >
-                                        <FolderCard
-                                            name={item.name}
-                                            onDoubleClick={() =>
-                                                setFolderHierarchy(
+                                        <DragDrop
+                                            dragOverClass={(isOver, dragging) =>
+                                                isOver && !dragging
+                                                    ? 'bg-yellow-300/20 border-opacity-100'
+                                                    : 'border-opacity-0'
+                                            }
+                                            draggingClass={isDragging =>
+                                                (isDragging && 'opacity-50') ||
+                                                ''
+                                            }
+                                            onDragStart={e =>
+                                                dragObjectStart(e, item)
+                                            }
+                                            onDrop={e =>
+                                                moveObjectToPath(
+                                                    e,
                                                     joinPath(
                                                         item.path,
                                                         item.name
                                                     )
                                                 )
                                             }
-                                        ></FolderCard>
-                                    </DragDrop>
+                                            className="p-1 border-2 border-yellow-400"
+                                        >
+                                            <FolderCard
+                                                name={item.name}
+                                                onDoubleClick={() =>
+                                                    setFolderHierarchy(
+                                                        joinPath(
+                                                            item.path,
+                                                            item.name
+                                                        )
+                                                    )
+                                                }
+                                            ></FolderCard>
+                                        </DragDrop>
+                                    </ContextMenuTrigger>
                                 ))}
                             </div>
                         </div>
@@ -164,23 +176,24 @@ export default function Dashboard() {
                             <p className="mb-4 font-bold">Files</p>
                             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                                 {myFileList.map(item => (
-                                    <DragDrop
+                                    <ContextMenuTrigger
                                         key={item.id}
-                                        draggingClass={isDragging =>
-                                            (isDragging && 'opacity-50') || ''
-                                        }
-                                        onDragStart={e =>
-                                            dragObjectStart(e, item)
+                                        menuContent={
+                                            <FileContextOptions id={item.id} />
                                         }
                                     >
-                                        <FileCard
-                                            type="file"
+                                        <DragDrop
+                                            as={FileCard}
+                                            draggingClass={isDragging =>
+                                                (isDragging && 'opacity-50') ||
+                                                ''
+                                            }
+                                            onDragStart={e =>
+                                                dragObjectStart(e, item)
+                                            }
                                             name={item.name}
-                                            onDelete={() => {
-                                                deleteObject(item.id);
-                                            }}
-                                        ></FileCard>
-                                    </DragDrop>
+                                        ></DragDrop>
+                                    </ContextMenuTrigger>
                                 ))}
                             </div>
                         </div>
@@ -203,53 +216,70 @@ export default function Dashboard() {
                         </List.Header>
                         <List.Body>
                             {myObjects.map(item => (
-                                <List.Row
+                                <ContextMenuTrigger
                                     key={item.id}
-                                    canDrop={item.type === 'folder'}
-                                    onDoubleClick={() => {
-                                        item.type === 'folder' &&
-                                            setFolderHierarchy(
-                                                joinPath(item.path, item.name)
-                                            );
-                                    }}
-                                    onDragStart={e => dragObjectStart(e, item)}
-                                    onDrop={e =>
-                                        item.type === 'folder' &&
-                                        moveObjectToPath(
-                                            e,
-                                            joinPath(item.path, item.name)
+                                    menuContent={
+                                        item.type === 'folder' ? (
+                                            <FolderContextOptions
+                                                id={item.id}
+                                            />
+                                        ) : (
+                                            <FileContextOptions id={item.id} />
                                         )
                                     }
                                 >
-                                    <List.Col
-                                        alignCenter={true}
-                                        className="text-xl"
+                                    <List.Row
+                                        canDrop={item.type === 'folder'}
+                                        onDoubleClick={() => {
+                                            item.type === 'folder' &&
+                                                setFolderHierarchy(
+                                                    joinPath(
+                                                        item.path,
+                                                        item.name
+                                                    )
+                                                );
+                                        }}
+                                        onDragStart={e =>
+                                            dragObjectStart(e, item)
+                                        }
+                                        onDrop={e =>
+                                            item.type === 'folder' &&
+                                            moveObjectToPath(
+                                                e,
+                                                joinPath(item.path, item.name)
+                                            )
+                                        }
                                     >
-                                        {item.type === 'folder' ? (
-                                            <MdFolder />
-                                        ) : (
-                                            <MdInsertDriveFile />
-                                        )}
-                                    </List.Col>
-                                    <List.Col className="flex-grow">
-                                        {item.name}
-                                    </List.Col>
-                                    <List.Col className="w-[190px] hidden truncate md:block">
-                                        {item.updateTime}
-                                    </List.Col>
-                                    <List.Col className="w-[120px] hidden md:block">
-                                        {item.owner}
-                                    </List.Col>
-                                    <List.Col className="w-[120px] hidden md:block">
-                                        {item.size} GB
-                                    </List.Col>
-                                    <List.Col
-                                        alignCenter={true}
-                                        className="text-xl md:hidden"
-                                    >
-                                        <MdInfo></MdInfo>
-                                    </List.Col>
-                                </List.Row>
+                                        <List.Col
+                                            alignCenter={true}
+                                            className="text-xl"
+                                        >
+                                            {item.type === 'folder' ? (
+                                                <MdFolder />
+                                            ) : (
+                                                <MdInsertDriveFile />
+                                            )}
+                                        </List.Col>
+                                        <List.Col className="flex-grow">
+                                            {item.name}
+                                        </List.Col>
+                                        <List.Col className="w-[190px] hidden truncate md:block">
+                                            {item.updateTime}
+                                        </List.Col>
+                                        <List.Col className="w-[120px] hidden md:block">
+                                            {item.owner}
+                                        </List.Col>
+                                        <List.Col className="w-[120px] hidden md:block">
+                                            {item.size} GB
+                                        </List.Col>
+                                        <List.Col
+                                            alignCenter={true}
+                                            className="text-xl md:hidden"
+                                        >
+                                            <MdInfo></MdInfo>
+                                        </List.Col>
+                                    </List.Row>
+                                </ContextMenuTrigger>
                             ))}
                         </List.Body>
                     </List>

@@ -1,5 +1,18 @@
 import classNames from 'classnames';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+
+export function DragDropContainer({
+    className,
+    children,
+    ...props
+}: React.ComponentProps<'div'>) {
+    return (
+        <div className={classNames('relative', className)} {...props}>
+            {children}
+            <div className="absolute inset-0"></div>
+        </div>
+    );
+}
 
 export type DragDropProps = {
     dragOverClass?: (
@@ -11,9 +24,10 @@ export type DragDropProps = {
         isDragOver: boolean
     ) => Parameters<typeof classNames>[0];
     as?: React.ElementType<any>;
+    [key: string]: any;
 } & React.ComponentProps<'div'>;
 
-export default function DragDrop({
+export const DragDrop = function DragDrop({
     dragOverClass,
     draggingClass,
     onDragStart,
@@ -26,7 +40,7 @@ export default function DragDrop({
     className,
     as: Component = 'div',
     ...restProps
-}: DragDropProps) {
+}: DragDropProps & React.ComponentProps<'div'>) {
     const [dragOver, setDragOver] = useState(false);
     const [dragging, setDragging] = useState(false);
 
@@ -83,4 +97,4 @@ export default function DragDrop({
             {children}
         </Component>
     );
-}
+};

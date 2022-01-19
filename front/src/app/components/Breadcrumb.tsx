@@ -3,7 +3,7 @@ import toArray from 'rc-util/lib/Children/toArray';
 import React, { ReactNode } from 'react';
 import { IconType } from 'react-icons';
 import { MdOutlineKeyboardArrowRight } from 'react-icons/md';
-import DragDrop, { DragDropProps } from './DragDrop';
+import { DragDrop, DragDropProps } from './DragDrop';
 
 interface BreadcrumbInterface extends React.FC<React.ComponentProps<'div'>> {
     Item: React.FC<
