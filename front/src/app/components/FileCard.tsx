@@ -1,11 +1,11 @@
 import classNames from 'classnames';
+import { forwardRef } from 'react';
 import { MdInsertDriveFile } from 'react-icons/md';
 
-export default function FileCard({
-    name,
-    className,
-    ...restProps
-}: { name: string } & React.ComponentProps<'div'>) {
+export default forwardRef<
+    HTMLDivElement,
+    { name: string } & React.ComponentProps<'div'>
+>(function FileCard({ name, className, ...restProps }, ref) {
     const cardClass = classNames([
         'relative',
         'overflow-hidden',
@@ -15,7 +15,11 @@ export default function FileCard({
     ]);
 
     return (
-        <div className={classNames(cardClass, className)} {...restProps}>
+        <div
+            ref={ref}
+            className={classNames(cardClass, className)}
+            {...restProps}
+        >
             <div className="h-[120px] bg-neutral-100"></div>
             <div className="flex items-center px-4 bg-white">
                 <MdInsertDriveFile className="mr-3 text-xl" />
@@ -23,4 +27,4 @@ export default function FileCard({
             </div>
         </div>
     );
-}
+});

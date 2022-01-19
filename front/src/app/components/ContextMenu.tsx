@@ -68,7 +68,7 @@ export default function ContextMenuTrigger({
         setVisible(false);
     }, []);
 
-    // const child = React.Children.only(children) as React.ReactElement;
+    const child = React.Children.only(children) as React.ReactElement;
     const triggerProps = {
         ref: triggerRef,
         onContextMenu: (e: React.MouseEvent) => {
@@ -78,10 +78,10 @@ export default function ContextMenuTrigger({
         ...restProps,
     };
 
-    // const trigger = React.cloneElement(child, triggerProps);
+    const trigger = React.cloneElement(child, triggerProps);
 
     const menuClassName = classNames(
-        'fixed flex flex-col py-1 min-w-[150px] rounded shadow-lg bg-white transition-opacity',
+        'absolute flex flex-col py-1 min-w-[150px] rounded shadow-lg bg-white transition-opacity',
         {
             invisible: !visible,
             'opacity-1': visible,
@@ -91,7 +91,7 @@ export default function ContextMenuTrigger({
 
     return (
         <TriggerContext.Provider value={{ onPopupMouseDown }}>
-            <div {...triggerProps}>{children}</div>
+            {trigger}
             {visible &&
                 createPortal(
                     <>

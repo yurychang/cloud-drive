@@ -1,15 +1,16 @@
 import classNames from 'classnames';
+import { forwardRef } from 'react';
 import { MdFolder } from 'react-icons/md';
 
-export default function FolderCard({
-    name,
-    className,
-    ...restProps
-}: {
-    name: string;
-} & React.ComponentProps<'div'>) {
+export default forwardRef<
+    HTMLDivElement,
+    {
+        name: string;
+    } & React.ComponentProps<'div'>
+>(function FolderCard({ name, className, ...restProps }, ref) {
     return (
         <div
+            ref={ref}
             className={classNames(
                 'px-4 py-4 flex items-center bg-white overflow-hidden shadow-sm select-none hover:shadow rounded',
                 className
@@ -20,4 +21,4 @@ export default function FolderCard({
             <span className="font-bold truncate">{name}</span>
         </div>
     );
-}
+});

@@ -36,7 +36,7 @@ export default function Dashboard() {
     const joinPath = (...paths: string[]) =>
         '/' + paths.join('/').split('/').filter(Boolean).join('/');
 
-    const { myObjects, deleteObject } = useMyObject({ path: folderHierarchy });
+    const { myObjects } = useMyObject({ path: folderHierarchy });
     const myFolderList = myObjects.filter(item => item.type === 'folder');
     const myFileList = myObjects.filter(item => item.type !== 'folder');
 
@@ -191,6 +191,8 @@ export default function Dashboard() {
                                             onDragStart={e =>
                                                 dragObjectStart(e, item)
                                             }
+                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                            /* @ts-ignore */
                                             name={item.name}
                                         ></DragDrop>
                                     </ContextMenuTrigger>

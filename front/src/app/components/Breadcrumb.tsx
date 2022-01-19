@@ -1,14 +1,21 @@
 import classNames from 'classnames';
 import toArray from 'rc-util/lib/Children/toArray';
-import React, { ReactNode } from 'react';
+import React, { forwardRef, ReactNode } from 'react';
 import { IconType } from 'react-icons';
 import { MdOutlineKeyboardArrowRight } from 'react-icons/md';
 import { DragDrop, DragDropProps } from './DragDrop';
 
 interface BreadcrumbInterface extends React.FC<React.ComponentProps<'div'>> {
-    Item: React.FC<
-        { as?: ReactNode } & DragDropProps & React.ComponentProps<'div'>
+    Item: React.ForwardRefExoticComponent<
+        React.PropsWithoutRef<
+            { as?: ReactNode } & DragDropProps & React.ComponentProps<'div'>
+        > &
+            React.RefAttributes<HTMLDivElement>
     >;
+    // Item: React.ForwardedRef<
+    //     HTMLDivElement,
+    //     { as?: ReactNode } & DragDropProps & React.ComponentProps<'div'>
+    // >;
     Separator: React.FC<React.ComponentProps<IconType>>;
 }
 
@@ -37,26 +44,29 @@ const Breadcrumb: BreadcrumbInterface = ({
     );
 };
 
-const BreadcrumbItem: BreadcrumbInterface['Item'] = ({
-    className,
-    children,
-    as: Node = 'div',
-    ...restProps
-}) => {
-    const hoverClass = 'hover:bg-gray-200';
-    const dragOverClass = 'bg-gray-200';
-    return (
-        <DragDrop
-            as={Node}
-            draggable="false"
-            className={classNames('py-1 px-2 rounded', hoverClass, className)}
-            dragOverClass={isOver => isOver && dragOverClass}
-            {...restProps}
-        >
-            {children}
-        </DragDrop>
-    );
-};
+const BreadcrumbItem: BreadcrumbInterface['Item'] = forwardRef(
+    ({ className, children, as: Node = 'div', ...restProps }, ref) => {
+        const hoverClass = 'hover:bg-gray-200';
+        const dragOverClass = 'bg-gray-200';
+        return (
+            <DragDrop
+                as={Node}
+                ref={ref}
+                draggable="false"
+                className={classNames(
+                    'py-1 px-2 rounded',
+                    hoverClass,
+                    className
+                )}
+                dragOverClass={isOver => isOver && dragOverClass}
+                {...restProps}
+            >
+                {children}
+            </DragDrop>
+        );
+    }
+);
+BreadcrumbItem.displayName = 'BreadcrumbItem';
 Breadcrumb.Item = BreadcrumbItem;
 
 const BreadcrumbSeparator: React.FC<React.ComponentProps<IconType>> = ({

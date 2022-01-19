@@ -1,4 +1,4 @@
-import React, { createRef, useRef } from 'react';
+import React, { createRef, forwardRef, useRef } from 'react';
 import classNames from 'classnames';
 import { DragDrop, DragDropProps } from './DragDrop';
 
@@ -47,21 +47,24 @@ List.Body = function ListBody({
     );
 };
 
-List.Row = function ListRow({
-    children,
-    className = '',
-    canDrop = false,
-    ...props
-}: {
-    children?: React.ReactNode;
-    className?: string;
-    canDrop?: boolean;
-} & DragDropProps &
-    React.ComponentProps<'div'>) {
+List.Row = forwardRef<
+    HTMLDivElement,
+    {
+        children?: React.ReactNode;
+        className?: string;
+        canDrop?: boolean;
+    } & React.ComponentProps<'div'>
+>(function ListRow(
+    { children, className = '', canDrop = false, ...props },
+    ref
+) {
     const dragOverClass = (isDragOver: boolean, isDragging: boolean) =>
         canDrop && isDragOver && !isDragging ? 'bg-gray-200' : 'bg-white';
     return (
         <DragDrop
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            /* @ts-ignore */
+            ref={ref}
             className={classNames(
                 'flex px-2 h-12 leading-[3rem] rounded',
                 { 'bg-white': !canDrop },
@@ -73,7 +76,7 @@ List.Row = function ListRow({
             {children}
         </DragDrop>
     );
-};
+});
 
 List.Col = function ListCol({
     children,
